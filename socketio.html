@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script src="http://10.80.71.208:1338/socket.io/socket.io.js"></script>
+		<script>
+			;var WSIO = function () {
+				var debug = 1,
+				    socket = null,
+				    serverAddress = 'http://10.80.71.208:1338';
+
+				function bindSocketEvents(){
+					socket.on('ready', function(data){
+						$(".status").html("Ready. <div style='font-size:55%;color:black;'>["+data.text+"]</div>").css('color', 'green');
+					});
+
+					socket.on('error', function (data) {
+						console.log("Error.");
+					});
+
+					socket.on('message', function (data) {
+						console.log("Mensaje Entrante desde el Server.");
+						$('#last-update').append('<p>Recived: '+data.text+'</p>');
+					});
+
+					socket.on('disconnect', function(){
+						$(".status").html("Desconectado.").css('color', 'red');
+						console.log("Reintento de conexion en 5s.");
+						//setTimeout("init_socket()",5000); // Cada 5 segundos verifica si el socket esta online.
+					});
+				}
+
+				function connect(){
+					$(".status").html("Conectando...").css('color', 'green');
+					socket = io.connect(serverAddress);
+					bindSocketEvents();
+				}
+
+			    return {
+			        init: function () {
+			        	$(".status").html("Desconocido.").css('color', 'blue');
+			        	connect();
+			      	}
+			    };
+			}();
+ 
+			// on document ready, bind the DOM elements to events
+			$(function(){
+				WSIO.init();
+			});
+		</script>
+        </head>
+    <body>
+        <h1>WebSocket: <span class="status">-</span></h1>
+        <hr>
+        <!-- form>
+            <input type="text" />
+            <button>Send</button>
+        </form -->
+        <div id='last-update'></div>
+    </body>
+</html>		

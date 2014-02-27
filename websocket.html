@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+        <script src="./socket.io.js"></script>
+        <script type="text/javascript">
+			;var WSS = function () {
+				var debug = 1;
+                window.WebSocket = window.WebSocket || window.MozWebSocket;
+                var websocket;
+
+				init_socket = function(){
+                    websocket = new WebSocket('ws://10.80.71.208:1337');
+
+	                websocket.onopen = function () {
+	                    $(".status").html("Conectado.").css('color', 'green');
+	                };
+
+	                websocket.onerror = function () {
+	                    $(".status").html("Desconectado.").css('color', 'red');
+	                    setTimeout("init_socket()",5000); // Cada 5 segundos verifica si el socket esta online.
+	                };
+	 
+	                websocket.onmessage = function (message) {
+	                    var obj = JSON.parse(message.data);
+	                    $('#last-update').append('<p>Recived: '+obj.text+'</p>');
+	                };
+				};
+
+			    return {
+			        init: function () {
+			        	init_socket();
+			      	},
+
+			      	send: function(texto){  websocket.send(texto); }
+			    };
+			}();
+
+		  	$(document).ready(function(){
+		  		// Metodo con modulo WebSockets
+		      	// WSS.init();
+
+				//----------------------------------------------------------------------------------------------------------
+
+		      	// Metodo con modulo Socket.IO
+
+				//----------------------------------------------------------------------------------------------------------
+		      	
+                $('button').click(function(e) {
+                    e.preventDefault();
+                    WSS.send($('input').val());
+                    $('input').val('');
+                });
+
+				//$.get( '/searching',parameters, function(data) { $('#results').html(data); } );
+            });
+
+
+        </script>
+        </head>
+    <body>
+        <h1>WebSocket: <span class="status">-</span></h1>
+        <hr>
+        <!-- form>
+            <input type="text" />
+            <button>Send</button>
+        </form -->
+        <div id='last-update'></div>
+    </body>
+</html>

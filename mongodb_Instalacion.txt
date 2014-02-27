@@ -1,0 +1,14 @@
+- Descargamos y descomprimimos mongodb
+- Creamos un archivo mongodb.config dentro de la carpeta bin de mongodb
+- Definimos el PATH para los datos.
+	dbpath=/home/[usuario]/mongodb/data
+	o
+	dbpath=c:\mongodb\data
+
+- Iniciamos el servidor
+	./mongod --config mongodb.config
+	o
+	mongod.exe --config mongodb.config
+
+Nota: Para utilizar con nodejs
+	$ npm install mongodb
